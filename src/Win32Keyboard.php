@@ -51,11 +51,13 @@ class Win32Keyboard extends Keyboard {
 
   protected int $eventType = self::EVENT_KEYDOWN;
 
+  protected bool $started = false;
+
   protected $win;
 
   protected $handle;
 
-  private $disposing = false;
+  private $stopping = false;
 
   private $arrayBufferSize = 128;
 
@@ -72,33 +74,42 @@ class Win32Keyboard extends Keyboard {
     }
 
     $this->loadLibrary();
-    $this->initConsole();
   }
 
-  public function dispose() {
-    if (!is_null($this->handle) && !$this->disposing) {
-      // TODO: DEBUG
-      //echo "Disposing...\n";
+  public function start() {
+    if (!$this->started) {
+      $this->started = true;
 
-      $this->disposing = true;
+      $this->initConsole();
+    }
+  }
 
-      // Restore console mode
-      if (!$this->win->SetConsoleMode($this->handle, $this->oldMode->cdata)) {
-        throw new \Exception('Failed to restore console mode (SetConsoleMode).');
+  public function stop() {
+    if ($this->started) {
+      if (!is_null($this->handle) && !$this->stopping) {
+        // TODO: DEBUG
+        //echo "stopping...\n";
+
+        $this->stopping = true;
+
+        // Restore console mode
+        if (!$this->win->SetConsoleMode($this->handle, $this->oldMode->cdata)) {
+          throw new \Exception('Failed to restore console mode (SetConsoleMode).');
+        }
+
+        $this->win->CloseHandle($this->handle);
       }
-
-      $this->win->CloseHandle($this->handle);
     }
   }
     
-  public function readKey(): ?Key {
+  protected function readQueue(): ?Key {
     $result = null;
     $keyCode = null;
     $keyChar = null;
 
     do {
 
-      if ($this->disposing) {
+      if ($this->stopping) {
         return null;
       }
 
@@ -108,7 +119,7 @@ class Win32Keyboard extends Keyboard {
         return null;
       }
 
-      if ($this->disposing) {
+      if ($this->stopping) {
         return null;
       }
 
@@ -164,9 +175,9 @@ class Win32Keyboard extends Keyboard {
         }
       }
 
-    } while (is_null($keyCode) && !$this->disposing);
+    } while (is_null($keyCode) && !$this->stopping);
 
-    if ($this->disposing) {
+    if ($this->stopping) {
       return null;
     }
 

@@ -24,16 +24,23 @@ abstract class Keyboard {
   }
 
   public function __destruct() {
-    $this->dispose();
+    $this->stop();
   }
 
-  abstract public function dispose();
+  abstract public function start();
+
+  abstract public function stop();
   
   public function read(): ?string {
     $key = $this->readKey();
     return !is_null($key) ? $key->getKey() : null;
   }
 
-  abstract public function readKey(): ?Key;
+  public function readKey(): ?Key {
+    $this->start();
+    return $this->readQueue();
+  }
+
+  abstract protected function readQueue(): ?Key;
 
 }

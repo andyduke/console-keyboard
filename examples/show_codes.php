@@ -21,7 +21,7 @@ if (PHP_OS == 'WINNT') {
     switch ($event) {
       case PHP_WINDOWS_EVENT_CTRL_C:
       case PHP_WINDOWS_EVENT_CTRL_BREAK:
-        $GLOBALS['k']->dispose();
+        $GLOBALS['k']->stop();
         break;
     }
   }
