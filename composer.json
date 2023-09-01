@@ -1,0 +1,32 @@
+{
+    "name": "andyduke/console-keyboard",
+    "description": "Cross-platform reading of keyboard events in the terminal.",
+    "keywords": [
+        "cli",
+        "keyboard",
+        "keys",
+        "key press"
+    ],
+    "homepage": "https://github.com/andyduke/console-keyboard",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "autoload": {
+        "psr-4": {
+            "AndyDuke\\ConsoleKeyboard\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Andy Chentsov",
+            "email": "chentsov@gmail.com",
+            "homepage": "https://github.com/andyduke"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/andyduke/console-keyboard/issues",
+        "source": "https://github.com/andyduke/console-keyboard"
+    },
+    "require": {
+        "php": ">=7.4.0"
+    }
+}
