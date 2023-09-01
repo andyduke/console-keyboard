@@ -21,30 +21,55 @@ class Win32Keyboard extends Keyboard {
   private const WAIT_OBJECT_0 = 0x00000000;
   private const INFINITE = /*-1*/0xFFFFFFFF;
 
-  private const ESC_KEY       = 27;
-  private const SPACE_KEY     = 32;
-  private const ENTER_KEY     = 13;
-  private const UP_KEY        = 38;
-  private const DOWN_KEY      = 40;
-  private const LEFT_KEY      = 37;
-  private const RIGHT_KEY     = 39;
+  private const ESC_CODE       = 27;
+  private const SPACE_CODE     = 32;
+  private const ENTER_CODE     = 13;
 
-  private const SHIFT_KEY     = 16;
-  private const CTRL_KEY      = 17;
-  private const ALT_KEY       = 18;
-  private const LWIN_KEY      = 91;
-  private const RWIN_KEY      = 92;
+  private const TAB_CODE       = 9;
+  private const BACKSPACE_CODE = 8;
+
+  private const INS_CODE       = 45;
+  private const DEL_CODE       = 46;
+  private const HOME_CODE      = 36;
+  private const END_CODE       = 35;
+  private const PGUP_CODE      = 33;
+  private const PGDOWN_CODE    = 34;
+
+  private const UP_CODE        = 38;
+  private const DOWN_CODE      = 40;
+  private const LEFT_CODE      = 37;
+  private const RIGHT_CODE     = 39;
+
+  private const CAPSLOCK_CODE   = 20;
+  private const NUMLOCK_CODE    = 144;
+  private const SCROLLLOCK_CODE = 145;
+
+  private const SHIFT_CODE     = 16;
+  private const CTRL_CODE      = 17;
+  private const ALT_CODE       = 18;
+  private const LWIN_CODE      = 91;
+  private const RWIN_CODE      = 92;
 
   private array $keymap = [
-    self::ESC_KEY           => self::ESC,
-    self::SPACE_KEY         => self::SPACE,
-    self::ENTER_KEY         => self::ENTER,
-    self::UP_KEY            => self::UP,
-    self::DOWN_KEY          => self::DOWN,
-    self::LEFT_KEY          => self::LEFT,
-    self::RIGHT_KEY         => self::RIGHT,
+    self::ESC_CODE           => self::ESC,
+    self::SPACE_CODE         => self::SPACE,
+    self::ENTER_CODE         => self::ENTER,
+    self::TAB_CODE           => self::TAB,
+    self::BACKSPACE_CODE     => self::BACKSPACE,
+    self::INS_CODE           => self::INS,
+    self::DEL_CODE           => self::DEL,
+    self::HOME_CODE          => self::HOME,
+    self::END_CODE           => self::END,
+    self::PGUP_CODE          => self::PGUP,
+    self::PGDOWN_CODE        => self::PGDOWN,
+    self::UP_CODE            => self::UP,
+    self::DOWN_CODE          => self::DOWN,
+    self::LEFT_CODE          => self::LEFT,
+    self::RIGHT_CODE         => self::RIGHT,
 
-    // TODO: Backspace, etc.
+    self::CAPSLOCK_CODE      => 'capslock',
+    self::NUMLOCK_CODE       => 'numlock',
+    self::SCROLLLOCK_CODE    => 'scrolllock',
   ];
 
   protected int $inputTimeout = self::INFINITE;
@@ -224,11 +249,11 @@ class Win32Keyboard extends Keyboard {
   }
 
   protected function isControlKey(int $keyCode): bool {
-    return ($keyCode == self::SHIFT_KEY) ||
-           ($keyCode == self::CTRL_KEY) ||
-           ($keyCode == self::ALT_KEY) ||
-           ($keyCode == self::LWIN_KEY) ||
-           ($keyCode == self::RWIN_KEY);
+    return ($keyCode == self::SHIFT_CODE) ||
+           ($keyCode == self::CTRL_CODE) ||
+           ($keyCode == self::ALT_CODE) ||
+           ($keyCode == self::LWIN_CODE) ||
+           ($keyCode == self::RWIN_CODE);
   }
 
   private function loadLibrary() {

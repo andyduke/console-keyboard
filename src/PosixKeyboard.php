@@ -4,22 +4,22 @@ namespace AndyDuke\ConsoleKeyboard;
 
 class PosixKeyboard extends Keyboard {
 
-  private const ESC_KEY       = "\e";
-  private const SPACE_KEY     = " ";
-  private const RETURN_KEY    = "\n";
-  private const UP_KEY        = "\033[A";
-  private const DOWN_KEY      = "\033[B";
-  private const LEFT_KEY      = "\033[D";
-  private const RIGHT_KEY     = "\033[C";
+  private const ESC_CODE       = "\e";
+  private const SPACE_CODE     = " ";
+  private const RETURN_CODE    = "\n";
+  private const UP_CODE        = "\033[A";
+  private const DOWN_CODE      = "\033[B";
+  private const LEFT_CODE      = "\033[D";
+  private const RIGHT_CODE     = "\033[C";
 
   private array $keymap = [
-    self::ESC_KEY           => self::ESC,
-    self::SPACE_KEY         => self::SPACE,
-    self::ENTER_KEY         => self::ENTER,
-    self::UP_KEY            => self::UP,
-    self::DOWN_KEY          => self::DOWN,
-    self::LEFT_KEY          => self::LEFT,
-    self::RIGHT_KEY         => self::RIGHT,
+    self::ESC_CODE           => self::ESC,
+    self::SPACE_CODE         => self::SPACE,
+    self::ENTER_CODE         => self::ENTER,
+    self::UP_CODE            => self::UP,
+    self::DOWN_CODE          => self::DOWN,
+    self::LEFT_CODE          => self::LEFT,
+    self::RIGHT_CODE         => self::RIGHT,
   ];
 
   protected ?string $initialTtyMode;

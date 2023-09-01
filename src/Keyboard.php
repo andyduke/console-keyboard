@@ -7,6 +7,19 @@ abstract class Keyboard {
   const ESC = 'esc';
   const SPACE = 'space';
   const ENTER = 'enter';
+
+  const TAB = 'tab';
+  const BACKSPACE = 'backspace';
+
+  const INS = 'insert';
+  const DEL = 'delete';
+  const HOME = 'home';
+  const END = 'end';
+  const PGUP = 'page-up';
+  const PGDOWN = 'page-down';
+
+  // TODO: F1-F20
+
   const UP = 'up';
   const DOWN = 'down';
   const LEFT = 'left';
