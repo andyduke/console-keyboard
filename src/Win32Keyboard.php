@@ -57,6 +57,8 @@ class Win32Keyboard extends Keyboard {
 
   protected $handle;
 
+  private $queue;
+
   private $stopping = false;
 
   private $arrayBufferSize = 128;
@@ -87,9 +89,6 @@ class Win32Keyboard extends Keyboard {
   public function stop() {
     if ($this->started) {
       if (!is_null($this->handle) && !$this->stopping) {
-        // TODO: DEBUG
-        //echo "stopping...\n";
-
         $this->stopping = true;
 
         // Restore console mode
@@ -103,9 +102,22 @@ class Win32Keyboard extends Keyboard {
   }
     
   protected function readQueue(): ?Key {
-    $result = null;
-    $keyCode = null;
-    $keyChar = null;
+    if (is_null($this->queue) || !$this->queue->valid()) {
+      $this->queue = $this->inputQueue();
+    }
+
+    $key = $this->queue->current();
+    $this->queue->next();
+
+    if ($key === null) {
+      $this->queue = null;
+    }
+
+    return $key;
+  }
+
+  private function inputQueue(): \Generator {
+    $keys = [];
 
     do {
 
@@ -165,9 +177,15 @@ class Win32Keyboard extends Keyboard {
             $keyCode = $keyEvent->wVirtualKeyCode;
             $keyChar = $keyEvent->uChar->AsciiChar;
 
-            if ($this->isControlKey($keyCode)) {
-              $keyCode = null;
-              $keyChar = null;
+            if (!$this->isControlKey($keyCode)) {
+              $count = $keyEvent->wRepeatCount;
+
+              for ($c = 0; $c < $count; $c++) {
+                $keys[] = [
+                  'char'    => $keyChar,
+                  'code'    => $keyCode,
+                ];
+              }
             }
 
             break;
@@ -175,7 +193,7 @@ class Win32Keyboard extends Keyboard {
         }
       }
 
-    } while (is_null($keyCode) && !$this->stopping);
+    } while (empty($keys) && !$this->stopping);
 
     if ($this->stopping) {
       return null;
@@ -186,17 +204,23 @@ class Win32Keyboard extends Keyboard {
       throw new \Exception('Failed to clear console input buffer (FlushConsoleInputBuffer).');
     }
 
-    if (!is_null($keyCode)) {
-      $key = $this->translateInput($keyCode, $keyChar);
-
-      $result = new Key($key, $keyCode);
+    if (!is_null($keys)) {
+      $keys = array_map(
+        function($input) {
+          $key = $this->translateInput($input['code'], $input['char']);
+          return new Key($key, $input['code']);
+        },
+        $keys
+      );
     } else {
       //echo "Key code: "; var_export($keyCode); echo "\n";
       //echo "Key char: "; var_export($keyChar); echo "\n";
       //echo "Null key...\n";
     }
 
-    return $result;
+    foreach($keys as $key) {
+      yield $key;
+    }
   }
 
   protected function isControlKey(int $keyCode): bool {
