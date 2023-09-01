@@ -45,7 +45,7 @@ class PosixKeyboard extends Keyboard {
    */
   private $unicodeMap = [
     // main keys
-    self::ESC   => '\u001b',
+    self::ESC      => '\u001b',
 
     // arrow keys
     self::UP       => '\u001b[A',
@@ -54,34 +54,34 @@ class PosixKeyboard extends Keyboard {
     self::RIGHT    => '\u001b[C',
 
     // function keys
-    'f1'       => '\u001bOP',
-    'f2'       => '\u001bOQ',
-    'f3'       => '\u001bOR',
-    'f4'       => '\u001bOS',
-    'f5'       => '\u001b[15~',
-    'f6'       => '\u001b[17~',
-    'f7'       => '\u001b[18~',
-    'f8'       => '\u001b[19~',
-    'f9'       => '\u001b[20~',
-    'f10'      => '\u001b[21~',
-    'f11'      => '\u001b[23~',
-    'f12'      => '\u001b[24~',
-    'f13'      => '\u001b[25~',
-    'f14'      => '\u001b[26~',
-    'f15'      => '\u001b[28~',
-    'f16'      => '\u001b[29~',
-    'f17'      => '\u001b[31~',
-    'f18'      => '\u001b[32~',
-    'f19'      => '\u001b[33~',
-    'ff20'     => '\u001b[34~',
+    self::F1       => '\u001b[11~',
+    self::F2       => '\u001b[12~',
+    self::F3       => '\u001b[13~',
+    self::F4       => '\u001b[14~',
+    self::F5       => '\u001b[15~',
+    self::F6       => '\u001b[17~',
+    self::F7       => '\u001b[18~',
+    self::F8       => '\u001b[19~',
+    self::F9       => '\u001b[20~',
+    self::F10      => '\u001b[21~',
+    self::F11      => '\u001b[23~',
+    self::F12      => '\u001b[24~',
+    self::F13      => '\u001b[25~',
+    self::F14      => '\u001b[26~',
+    self::F15      => '\u001b[28~',
+    self::F16      => '\u001b[29~',
+    self::F17      => '\u001b[31~',
+    self::F18      => '\u001b[32~',
+    self::F19      => '\u001b[33~',
+    self::F20      => '\u001b[34~',
 
     // other keys
-    self::INS     => '\u001b[2~',
-    self::DEL     => '\u001b[3~',
-    self::HOME    => '\u001b[1~',
-    self::END     => '\u001b[4~',
-    self::PGUP    => '\u001b[5~',
-    self::PGDOWN  => '\u001b[6~',
+    self::INS      => '\u001b[2~',
+    self::DEL      => '\u001b[3~',
+    self::HOME     => '\u001b[1~',
+    self::END      => '\u001b[4~',
+    self::PGUP     => '\u001b[5~',
+    self::PGDOWN   => '\u001b[6~',
   ];
 
   protected ?string $initialTtyMode;

@@ -18,7 +18,30 @@ abstract class Keyboard {
   const PGUP = 'page-up';
   const PGDOWN = 'page-down';
 
-  // TODO: F1-F20
+  const F1 = 'F1';
+  const F2 = 'F2';
+  const F3 = 'F3';
+  const F4 = 'F4';
+  const F5 = 'F5';
+  const F6 = 'F6';
+  const F7 = 'F7';
+  const F8 = 'F8';
+  const F9 = 'F9';
+  const F10 = 'F10';
+  const F11 = 'F11';
+  const F12 = 'F12';
+  const F13 = 'F13';
+  const F14 = 'F14';
+  const F15 = 'F15';
+  const F16 = 'F16';
+  const F17 = 'F17';
+  const F18 = 'F18';
+  const F19 = 'F19';
+  const F20 = 'F20';
+  const F21 = 'F21';
+  const F22 = 'F22';
+  const F23 = 'F23';
+  const F24 = 'F24';
 
   const UP = 'up';
   const DOWN = 'down';
