@@ -15,21 +15,6 @@ $k = Keyboard::create([
   ],
 ]);
 
-if (PHP_OS == 'WINNT') {
-
-  function win_ctrl_handler(int $event) {
-    switch ($event) {
-      case PHP_WINDOWS_EVENT_CTRL_C:
-      case PHP_WINDOWS_EVENT_CTRL_BREAK:
-        $GLOBALS['k']->stop();
-        break;
-    }
-  }
-
-  sapi_windows_set_ctrl_handler('win_ctrl_handler');
-
-}
-
 $key = null;
 do {
   $key = $k->readKey();

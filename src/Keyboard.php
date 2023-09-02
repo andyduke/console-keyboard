@@ -65,6 +65,10 @@ abstract class Keyboard {
     $this->stop();
   }
 
+  public function isStarted() {
+    return $this->started;
+  }
+
   protected function start() {
     if (!$this->started) {
       $this->started = true;

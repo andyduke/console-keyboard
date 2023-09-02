@@ -101,6 +101,8 @@ class Win32Keyboard extends Keyboard {
 
   protected int $eventType = self::EVENT_KEYDOWN;
 
+  protected bool $handleCtrlC = true;
+
   protected $win;
 
   protected $handle;
@@ -128,11 +130,21 @@ class Win32Keyboard extends Keyboard {
 
   protected function prepare() {
     $this->initConsole();
+
+    // Set Ctrl-C handler
+    if ($this->handleCtrlC) {
+      \sapi_windows_set_ctrl_handler([$this, '_ctrlHandler'], true);
+    }
   }
 
   protected function cleanup() {
     if (!is_null($this->handle) && !$this->stopping) {
       $this->stopping = true;
+
+      // Remove Ctrl-C handler
+      if ($this->handleCtrlC) {
+        \sapi_windows_set_ctrl_handler([$this, '_ctrlHandler'], false);
+      }
 
       // Clear console input buffer
       if (!$this->win->FlushConsoleInputBuffer($this->handle)) {
@@ -148,6 +160,15 @@ class Win32Keyboard extends Keyboard {
     }
 
     $this->queue = null;
+  }
+
+  public function _ctrlHandler(int $event) {
+    switch ($event) {
+      case \PHP_WINDOWS_EVENT_CTRL_C:
+      case \PHP_WINDOWS_EVENT_CTRL_BREAK:
+        $this->stop();
+        break;
+    }
   }
     
   protected function readQueue(): ?Key {
