@@ -131,10 +131,13 @@ class Win32Keyboard extends Keyboard {
   }
 
   protected function cleanup() {
-    $this->queue = null;
-
     if (!is_null($this->handle) && !$this->stopping) {
       $this->stopping = true;
+
+      // Clear console input buffer
+      if (!$this->win->FlushConsoleInputBuffer($this->handle)) {
+        throw new \Exception('Failed to clear console input buffer (FlushConsoleInputBuffer).');
+      }
 
       // Restore console mode
       if (!$this->win->SetConsoleMode($this->handle, $this->oldMode->cdata)) {
@@ -143,6 +146,8 @@ class Win32Keyboard extends Keyboard {
 
       $this->win->CloseHandle($this->handle);
     }
+
+    $this->queue = null;
   }
     
   protected function readQueue(): ?Key {
@@ -150,8 +155,8 @@ class Win32Keyboard extends Keyboard {
       $this->queue = $this->inputQueue();
     }
 
-    $key = $this->queue->current();
-    $this->queue->next();
+    $key = !empty($this->queue) ? $this->queue->current() : null;
+    if (!empty($this->queue)) $this->queue->next();
 
     if ($key === null) {
       $this->queue = null;
@@ -241,11 +246,6 @@ class Win32Keyboard extends Keyboard {
 
     if ($this->stopping) {
       return null;
-    }
-
-    // Clear console input buffer
-    if (!$this->win->FlushConsoleInputBuffer($this->handle)) {
-      throw new \Exception('Failed to clear console input buffer (FlushConsoleInputBuffer).');
     }
 
     if (!is_null($keys)) {

@@ -67,12 +67,14 @@ abstract class Keyboard {
 
   protected function start() {
     if (!$this->started) {
+      $this->started = true;
       $this->prepare();
     }
   }
   
-  protected function stop() {
+  public function stop() {
     if ($this->started) {
+      $this->started = false;
       $this->cleanup();
     }
   }
