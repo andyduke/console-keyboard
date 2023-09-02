@@ -131,6 +131,8 @@ class Win32Keyboard extends Keyboard {
   }
 
   protected function cleanup() {
+    $this->queue = null;
+
     if (!is_null($this->handle) && !$this->stopping) {
       $this->stopping = true;
 
