@@ -221,10 +221,11 @@ class Win32Keyboard extends Keyboard {
 
             //var_export($keyEvent->uChar->AsciiChar);
 
-            //echo "*";
+            $unicodeChar = \mb_chr($keyEvent->uChar->UnicodeChar);
 
             $keyCode = $keyEvent->wVirtualKeyCode;
-            $keyChar = $keyEvent->uChar->AsciiChar;
+            //$keyChar = $keyEvent->uChar->AsciiChar;
+            $keyChar = $unicodeChar;
 
             if (!$this->isControlKey($keyCode)) {
               $count = $keyEvent->wRepeatCount;
