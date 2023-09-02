@@ -145,30 +145,20 @@ class PosixKeyboard extends Keyboard {
 
   protected ?string $initialTtyMode;
 
-  protected bool $started = false;
-
   public function __construct($options = []) {
 
   }
 
-  public function start() {
-    if (!$this->started) {
-      $this->initialTtyMode ??= (shell_exec('stty -g') ?: null);
-      shell_exec('stty cbreak -echo');
-
-      $this->started = true;
-    }
+  protected function prepare() {
+    $this->initialTtyMode ??= (shell_exec('stty -g') ?: null);
+    shell_exec('stty cbreak -echo');
   }
 
-  public function stop() {
-    if ($this->started) {
-      if ($this->initialTtyMode) {
-        shell_exec("stty {$this->initialTtyMode}");
+  protected function cleanup() {
+    if ($this->initialTtyMode) {
+      shell_exec("stty {$this->initialTtyMode}");
 
-        $this->initialTtyMode = null;
-      }
-
-      $this->started = false;
+      $this->initialTtyMode = null;
     }
   }
   

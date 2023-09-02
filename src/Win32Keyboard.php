@@ -101,8 +101,6 @@ class Win32Keyboard extends Keyboard {
 
   protected int $eventType = self::EVENT_KEYDOWN;
 
-  protected bool $started = false;
-
   protected $win;
 
   protected $handle;
@@ -128,26 +126,20 @@ class Win32Keyboard extends Keyboard {
     $this->loadLibrary();
   }
 
-  public function start() {
-    if (!$this->started) {
-      $this->started = true;
-
-      $this->initConsole();
-    }
+  protected function prepare() {
+    $this->initConsole();
   }
 
-  public function stop() {
-    if ($this->started) {
-      if (!is_null($this->handle) && !$this->stopping) {
-        $this->stopping = true;
+  protected function cleanup() {
+    if (!is_null($this->handle) && !$this->stopping) {
+      $this->stopping = true;
 
-        // Restore console mode
-        if (!$this->win->SetConsoleMode($this->handle, $this->oldMode->cdata)) {
-          throw new \Exception('Failed to restore console mode (SetConsoleMode).');
-        }
-
-        $this->win->CloseHandle($this->handle);
+      // Restore console mode
+      if (!$this->win->SetConsoleMode($this->handle, $this->oldMode->cdata)) {
+        throw new \Exception('Failed to restore console mode (SetConsoleMode).');
       }
+
+      $this->win->CloseHandle($this->handle);
     }
   }
     

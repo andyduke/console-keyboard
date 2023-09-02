@@ -50,6 +50,8 @@ abstract class Keyboard {
 
   // ???
   //use Utils\EventsTrait;
+
+  private bool $started = false;
   
   public static function create($options = []) {
     if (PHP_OS == 'WINNT') {
@@ -63,9 +65,21 @@ abstract class Keyboard {
     $this->stop();
   }
 
-  abstract public function start();
+  protected function start() {
+    if (!$this->started) {
+      $this->prepare();
+    }
+  }
+  
+  protected function stop() {
+    if ($this->started) {
+      $this->cleanup();
+    }
+  }
 
-  abstract public function stop();
+  abstract protected function prepare();
+  
+  abstract protected function cleanup();
   
   public function read(): ?string {
     $key = $this->readKey();
