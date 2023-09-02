@@ -150,7 +150,7 @@ class PosixKeyboard extends Keyboard {
   }
 
   protected function prepare() {
-    $this->initialTtyMode ??= (shell_exec('stty -g') ?: null);
+    $this->initialTtyMode = (shell_exec('stty -g') ?: null);
     shell_exec('stty cbreak -echo');
   }
 
