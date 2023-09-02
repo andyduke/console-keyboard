@@ -69,7 +69,7 @@ abstract class Keyboard {
     return $this->started;
   }
 
-  protected function start() {
+  public function start() {
     if (!$this->started) {
       $this->started = true;
       $this->prepare();
