@@ -86,15 +86,29 @@ abstract class Keyboard {
   abstract protected function prepare();
   
   abstract protected function cleanup();
-  
-  public function read(): ?string {
-    $key = $this->readKey();
-    return !is_null($key) ? $key->getKey() : null;
+
+  /**
+   * @return Generator<string|null>
+   */
+  public function read(): \Generator {
+    foreach($this->readKey() as $key) {
+      yield !is_null($key) ? $key->getKey() : null;
+    }
   }
 
-  public function readKey(): ?Key {
+  /**
+   * @return Generator<Key|null>
+   */
+  public function readKey(): \Generator {
     $this->start();
-    return $this->readQueue();
+    try {
+      do {
+        $key = $this->readQueue();
+        yield $key;
+      } while ($this->started);
+    } finally {
+      $this->stop();
+    }
   }
 
   abstract protected function readQueue(): ?Key;

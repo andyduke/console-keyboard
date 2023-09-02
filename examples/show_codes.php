@@ -15,16 +15,17 @@ $k = Keyboard::create([
   ],
 ]);
 
-$key = null;
-do {
-  $key = $k->readKey();
-
+foreach($k->readKey() as $key) {
   // Ctrl-C or Error
   if (is_null($key)) {
     break;
   }
 
+  if ($key == 'q') {
+    break;
+  }
+
   echo $key->getKey() . ' (' . $key->getRawKey() . ')' . "\n";
-} while ($key != 'q');
+}
 
 echo "\nExit.\n";
