@@ -2,6 +2,12 @@
 
 namespace AndyDuke\ConsoleKeyboard;
 
+/**
+ * Class for cross-platform reading of keystrokes in the terminal
+ *
+ * @link https://github.com/andyduke/console-keyboard/blob/master/README.md Documentation
+ * @author Andy Chentsov <chentsov@gmail.com>
+ */
 abstract class Keyboard {
 
   const ESC = 'esc';
@@ -48,16 +54,17 @@ abstract class Keyboard {
   const LEFT = 'left';
   const RIGHT = 'right';
 
-  // ???
-  //use Utils\EventsTrait;
-
   private bool $started = false;
-  
+
+  /**
+   * Creates an instance of the `Keyboard` class
+   * for the current platform.
+   */
   public static function create($options = []) {
     if (PHP_OS == 'WINNT') {
       return new Win32Keyboard($options['win32'] ?? []);
     } else {
-      return new PosixKeyboard($options['posix'] ?? []);
+      return new AnsiKeyboard($options['posix'] ?? []);
     }
   }
 
@@ -65,17 +72,33 @@ abstract class Keyboard {
     $this->stop();
   }
 
+  /**
+   * Returns the status - whether the class is in a reading loop
+   *
+   * @return bool
+   */
   public function isStarted() {
     return $this->started;
   }
 
+  /**
+   * Initializes reading keystrokes.
+   *
+   * Usually not directly used, because `read()` and `readKey()`
+   * call this method automatically.
+   */
   public function start() {
     if (!$this->started) {
       $this->started = true;
       $this->prepare();
     }
   }
-  
+
+  /**
+   * Stops the keystroke reading loop.
+   *
+   * You can use it, for example, in the Ctrl-C signal handler.
+   */
   public function stop() {
     if ($this->started) {
       $this->started = false;
@@ -84,10 +107,13 @@ abstract class Keyboard {
   }
 
   abstract protected function prepare();
-  
+
   abstract protected function cleanup();
 
   /**
+   * Returns a Generator that reads a keypress and
+   * returns the name of the key pressed
+   *
    * @return Generator<string|null>
    */
   public function read(): \Generator {
@@ -97,6 +123,10 @@ abstract class Keyboard {
   }
 
   /**
+   * Returns a Generator that reads a keypress and
+   * returns a `Key` class with the name and
+   * code of the key pressed
+   *
    * @return Generator<Key|null>
    */
   public function readKey(): \Generator {
