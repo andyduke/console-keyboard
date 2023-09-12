@@ -2,6 +2,9 @@
 
 namespace AndyDuke\ConsoleKeyboard;
 
+/**
+ * Implementation of a class for reading keystrokes in the terminal for Windows
+ */
 class Win32Keyboard extends Keyboard {
 
   public const EVENT_KEYUP = 1;
@@ -170,7 +173,7 @@ class Win32Keyboard extends Keyboard {
         break;
     }
   }
-    
+
   protected function readQueue(): ?Key {
     if (is_null($this->queue) || !$this->queue->valid()) {
       $this->queue = $this->inputQueue();
@@ -221,9 +224,6 @@ class Win32Keyboard extends Keyboard {
           throw new \Exception('Failed to read console input event data (ReadConsoleInputW).');
         }
 
-        //var_export($this->cNumRead->cdata);
-        //echo "\n";
-
         // Read input events
         for ($j = $this->cNumRead->cdata - 1; $j >= 0; $j--) {
           if ($this->inputBuffer[$j]->EventType === self::KEY_EVENT) {
@@ -231,21 +231,10 @@ class Win32Keyboard extends Keyboard {
 
             // Check event type
             $eventType = $keyEvent->bKeyDown ? self::EVENT_KEYDOWN : self::EVENT_KEYUP;
-
-            //var_export($event_type); echo ' != '; var_export($this->eventType); echo "\n";
-
-            //echo "."; var_export($eventType);
-
             if ($eventType != $this->eventType) continue;
 
-            //var_export($keyEvent);
-
-            //var_export($keyEvent->uChar->AsciiChar);
-
             $unicodeChar = \mb_chr($keyEvent->uChar->UnicodeChar);
-
             $keyCode = $keyEvent->wVirtualKeyCode;
-            //$keyChar = $keyEvent->uChar->AsciiChar;
             $keyChar = $unicodeChar;
 
             if (!$this->isControlKey($keyCode)) {
@@ -278,10 +267,6 @@ class Win32Keyboard extends Keyboard {
         },
         $keys
       );
-    } else {
-      //echo "Key code: "; var_export($keyCode); echo "\n";
-      //echo "Key char: "; var_export($keyChar); echo "\n";
-      //echo "Null key...\n";
     }
 
     foreach($keys as $key) {

@@ -18,7 +18,7 @@ foreach($k->readKey() as $key) {
     break;
   }
 
-  echo $key->getKey() . ' (' . $key->getRawKey() . ')' . "\n";
+  echo $key->getKey() . ' (' . $key->getRawKey() . ')' . PHP_EOL;
 }
 
 echo "\nExit.\n";
