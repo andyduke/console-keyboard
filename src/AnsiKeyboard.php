@@ -82,13 +82,19 @@ class AnsiKeyboard extends Keyboard {
 
   protected ?string $initialTtyMode;
 
-  public function __construct($options = []) {
+  protected bool $handleCtrlC = true;
 
+  public function __construct($options = []) {
+    foreach($options as $key => $value) {
+      if (property_exists($this, $key)) {
+        $this->{$key} = $value;
+      }
+    }
   }
 
   protected function prepare() {
     $this->initialTtyMode = (shell_exec('stty -g') ?: null);
-    shell_exec('stty cbreak -echo -isig');
+    shell_exec('stty cbreak -echo' . ($this->handleCtrlC ? ' -isig' : ''));
   }
 
   protected function cleanup() {
@@ -115,7 +121,7 @@ class AnsiKeyboard extends Keyboard {
       $this->queue = null;
     }
 
-    if ($key == self::CTRL_C) {
+    if ($this->handleCtrlC && $key == self::CTRL_C) {
       $this->stop();
       return null;
     }
