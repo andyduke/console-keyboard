@@ -7,6 +7,8 @@ namespace AndyDuke\ConsoleKeyboard;
  */
 class AnsiKeyboard extends Keyboard {
 
+  private const CTRL_C = 'ctrl-c';
+
   /**
    * Plain text char map
    */
@@ -20,7 +22,8 @@ class AnsiKeyboard extends Keyboard {
    * Ascii char map
    */
   private $asciiMap = [
-    127 => self::BACKSPACE, // \u0008 doesn't work
+    3     => self::CTRL_C,
+    127   => self::BACKSPACE, // \u0008 doesn't work
   ];
 
   /**
@@ -85,7 +88,7 @@ class AnsiKeyboard extends Keyboard {
 
   protected function prepare() {
     $this->initialTtyMode = (shell_exec('stty -g') ?: null);
-    shell_exec('stty cbreak -echo');
+    shell_exec('stty cbreak -echo -isig');
   }
 
   protected function cleanup() {
@@ -110,6 +113,11 @@ class AnsiKeyboard extends Keyboard {
 
     if ($key === null) {
       $this->queue = null;
+    }
+
+    if ($key == self::CTRL_C) {
+      $this->stop();
+      return null;
     }
 
     return $key;
