@@ -10,6 +10,8 @@ class Win32Keyboard extends Keyboard {
   public const EVENT_KEYUP = 1;
   public const EVENT_KEYDOWN = 2;
 
+  private const CTRL_C_CHAR = 3;
+
   private const STD_INPUT_HANDLE = -10;
 
   // https://docs.microsoft.com/fr-fr/windows/console/setconsolemode
@@ -133,21 +135,11 @@ class Win32Keyboard extends Keyboard {
 
   protected function prepare() {
     $this->initConsole();
-
-    // Set Ctrl-C handler
-    if ($this->handleCtrlC) {
-      \sapi_windows_set_ctrl_handler([$this, '_ctrlHandler'], true);
-    }
   }
 
   protected function cleanup() {
     if (!is_null($this->handle) && !$this->stopping) {
       $this->stopping = true;
-
-      // Remove Ctrl-C handler
-      if ($this->handleCtrlC) {
-        \sapi_windows_set_ctrl_handler([$this, '_ctrlHandler'], false);
-      }
 
       // Clear console input buffer
       if (!$this->win->FlushConsoleInputBuffer($this->handle)) {
@@ -163,15 +155,6 @@ class Win32Keyboard extends Keyboard {
     }
 
     $this->queue = null;
-  }
-
-  public function _ctrlHandler(int $event) {
-    switch ($event) {
-      case \PHP_WINDOWS_EVENT_CTRL_C:
-      case \PHP_WINDOWS_EVENT_CTRL_BREAK:
-        $this->stop();
-        break;
-    }
   }
 
   protected function readQueue(): ?Key {
@@ -262,7 +245,9 @@ class Win32Keyboard extends Keyboard {
       $keys = array_map(
         function($input) {
           $key = $this->translateInput($input['code'], $input['char']);
-          return new Key($key, $input['code']);
+          return !is_null($key)
+            ? new Key($key, $input['code'])
+            : null;
         },
         $keys
       );
@@ -310,7 +295,7 @@ class Win32Keyboard extends Keyboard {
     }
 
     // Set console mode
-    $newConsoleMode = self::ENABLE_WINDOW_INPUT | self::ENABLE_PROCESSED_INPUT;
+    $newConsoleMode = self::ENABLE_WINDOW_INPUT;
     if (!$this->win->SetConsoleMode($this->handle, $newConsoleMode)) {
       throw new \Exception('Failed to set new console mode (SetConsoleMode).');
     }
@@ -322,6 +307,12 @@ class Win32Keyboard extends Keyboard {
   }
 
   private function translateInput(int $code, string $char): ?string {
+    // Handle Ctrl-C
+    if ($this->handleCtrlC && (\mb_ord($char) == self::CTRL_C_CHAR)) {
+      $this->stop();
+      return null;
+    }
+
     $result = $this->keymap[$code] ?? $char;
 
     return $result;
