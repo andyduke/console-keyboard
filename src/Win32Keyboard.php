@@ -225,7 +225,7 @@ class Win32Keyboard extends Keyboard {
         }
 
         // Read input events
-        for ($j = $this->cNumRead->cdata - 1; $j >= 0; $j--) {
+        for ($j = 0; $j <= $this->cNumRead->cdata - 1; $j++) {
           if ($this->inputBuffer[$j]->EventType === self::KEY_EVENT) {
             $keyEvent = $this->inputBuffer[$j]->Event->KeyEvent;
 
@@ -248,7 +248,6 @@ class Win32Keyboard extends Keyboard {
               }
             }
 
-            break;
           }
         }
       }
