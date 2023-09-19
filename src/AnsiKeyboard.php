@@ -75,6 +75,8 @@ class AnsiKeyboard extends Keyboard {
     '\u001b[6~' => self::PGDOWN,
   ];
 
+  private $queue;
+
   protected ?string $initialTtyMode;
 
   public function __construct($options = []) {
@@ -92,16 +94,51 @@ class AnsiKeyboard extends Keyboard {
 
       $this->initialTtyMode = null;
     }
+
+    $this->queue = null;
   }
 
   protected function readQueue(): ?Key {
     $this->start();
 
+    if (is_null($this->queue) || !$this->queue->valid()) {
+      $this->queue = $this->inputQueue();
+    }
+
+    $key = !empty($this->queue) ? $this->queue->current() : null;
+    if (!empty($this->queue)) $this->queue->next();
+
+    if ($key === null) {
+      $this->queue = null;
+    }
+
+    return $key;
+  }
+
+  private function inputQueue(): \Generator {
     $input = fread(STDIN, 1024);
 
-    $key = $this->translateInput($input);
+    // Handle Ansi code
+    $keyCode = $this->translateInput($input);
 
-    return new Key($key, $input);
+    // Handle string
+    if (is_null($keyCode)) {
+      $cnt = \mb_strlen($input);
+      for ($i = 0; $i < $cnt; $i++) {
+        $rawKey = \mb_substr($input, $i, 1);
+
+        $keyCode = $this->translateInput($rawKey);
+        if (is_null($keyCode)) {
+          $keyCode = $rawKey;
+        }
+
+        $key = new Key($keyCode, $rawKey);
+        yield $key;
+      }
+    } else {
+      $key = new Key($keyCode, $input);
+      yield $key;
+    }
   }
 
   private function translateInput(?string $input): ?string {
@@ -128,7 +165,7 @@ class AnsiKeyboard extends Keyboard {
       }
     }
 
-    return $input;
+    return null;
   }
 
   private function unicodeToString($code) {
