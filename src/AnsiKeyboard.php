@@ -100,8 +100,6 @@ class AnsiKeyboard extends Keyboard {
   }
 
   protected function readQueue(): ?Key {
-    $this->start();
-
     if (is_null($this->queue) || !$this->queue->valid()) {
       $this->queue = $this->inputQueue();
     }
